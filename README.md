@@ -32,3 +32,7 @@
 [iiif程序员玩Houdini知乎专栏](https://www.zhihu.com/column/letshoudini)
 
 [演奇-Houdini学习](https://zhuanlan.zhihu.com/p/434005452)
+
+[jtomori-VEX教程](https://github.com/jtomori/vex_tutorial)
+
+[cgwiki-VEX教程](https://www.tokeru.com/cgwiki/index.php?title=HoudiniVex#)
