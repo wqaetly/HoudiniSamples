@@ -36,3 +36,5 @@
 [jtomori-VEX教程](https://github.com/jtomori/vex_tutorial)
 
 [cgwiki-VEX教程](https://www.tokeru.com/cgwiki/index.php?title=HoudiniVex#)
+
+[Junichiro-VEX教程(YouTuBe视频教程，概念讲解的相当清晰)](https://www.youtube.com/playlist?list=PLzRzqTjuGIDhiXsP0hN3qBxAZ6lkVfGDI)
