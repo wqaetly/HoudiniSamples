@@ -73,7 +73,7 @@
 - 按功能来划分的话，`HScript`和`Python`可以看成一类脚本，VEX是单独的一类
 - `HScript`一般用在一些工具流程向的处理（比如创建删除Node，修改Node的UI显示状态，打开工程等）：https://www.sidefx.com/docs/houdini/commands/index.html
 - `Python`可以同VEX一样用于处理几何，但也可以方便的处理数据和工具流程，比如从外部读取json转换成Houdini中的几何数据：https://www.sidefx.com/docs/houdini/hom/index.html
-- `VEX`一般用在`attribute wrangle nodes`这些SOP中处理几何计算，可以认为通过VEX自定义了node内部的处理逻辑：https://www.sidefx.com/docs/houdini/vex/index.html
+- `VEX`一般用在`attribute wrangle nodes`这些SOP中处理几何计算，当然了，VEX自己也有一套获取`Channel/Param`值的方法，可以认为通过VEX自定义了node内部的处理逻辑：https://www.sidefx.com/docs/houdini/vex/index.html
 - `@`是VEX的标志性符号，`$`是HScript的标志性符号。但实际上使用的时候会相当困惑，比如可以在HScript里写`@`引用特定的一些属性（比如`@Frame`和`@Time`，但它仍然是HScript而不是VEX），再比如可以在VEX中书写`$`来引用一些全局变量
 
 ![](arch.png)
