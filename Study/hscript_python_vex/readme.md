@@ -76,4 +76,4 @@
 - `VEX`一般用在`attribute wrangle nodes`这些SOP中处理几何计算，可以认为通过VEX自定义了node内部的处理逻辑：https://www.sidefx.com/docs/houdini/vex/index.html
 - `@`是VEX的标志性符号，`$`是HScript的标志性符号。但实际上使用的时候会相当困惑，比如可以在HScript里写`@`引用特定的一些属性（比如`@Frame`和`@Time`，但它仍然是HScript而不是VEX），再比如可以在VEX中书写`$`来引用一些全局变量
 
-<iframe id="embed_dom" name="embed_dom" frameborder="0" style="display:block;width:100%; height:600px;" src="https://www.processon.com/embed/625eb26d6376890727348155"></iframe>
+![](http://assets.processon.com/chart_image/625eb26d6376890727348158.png)
