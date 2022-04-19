@@ -68,11 +68,12 @@
 
 ## 总结
 
-- Houdini目前有三种脚本语言，执行效率由低到高进行排列为Python，HScript和VEX，三种脚本各自有各自的优点和应用场景，但三者应用场景一些时候是重合的，并不是非此即彼的关系
-- `Expression`是Houdini中对于代码的总称，包括Channel中的代码，SOP中的代码等，它可以是VEX，可以是HScript，也可以是Python
+- Houdini目前有三种脚本语言，执行效率由低到高进行排列为Python，HScript和VEX，三种脚本各自有各自的优点和应用场景
+- `Expression`是Houdini中`索引/获取` `Channel/Param`值的专用脚本，可以用HScript和Python两种脚本来写Expression，可以用在各个地方：https://www.sidefx.com/docs/houdini/expressions/
 - 按功能来划分的话，`HScript`和`Python`可以看成一类脚本，VEX是单独的一类
-- `HScript`一般用在`Channel`中的进行属性引用和计算，以及一些工具流程向的处理（比如创建删除node，打开工程等）
-- `Python`可以同VEX一样用于处理几何，但也可以方便的处理数据和工具流程，比如从外部读取json转换成Houdini中的几何数据
-- `VEX`一般用在`attribute wrangle nodes`这些SOP中处理几何计算，可以认为通过VEX自定义了node内部的处理逻辑
+- `HScript`一般用在一些工具流程向的处理（比如创建删除Node，修改Node的UI显示状态，打开工程等）：https://www.sidefx.com/docs/houdini/commands/index.html
+- `Python`可以同VEX一样用于处理几何，但也可以方便的处理数据和工具流程，比如从外部读取json转换成Houdini中的几何数据：https://www.sidefx.com/docs/houdini/hom/index.html
+- `VEX`一般用在`attribute wrangle nodes`这些SOP中处理几何计算，可以认为通过VEX自定义了node内部的处理逻辑：https://www.sidefx.com/docs/houdini/vex/index.html
 - `@`是VEX的标志性符号，`$`是HScript的标志性符号。但实际上使用的时候会相当困惑，比如可以在HScript里写`@`引用特定的一些属性（比如`@Frame`和`@Time`，但它仍然是HScript而不是VEX），再比如可以在VEX中书写`$`来引用一些全局变量
 
+<iframe id="embed_dom" name="embed_dom" frameborder="0" style="display:block;width:100%; height:600px;" src="https://www.processon.com/embed/625eb26d6376890727348155"></iframe>
