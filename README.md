@@ -16,7 +16,7 @@
 另外再分享下我的学习路线，仅供参考
 
 **[原图链接（速度快，图中链接可点击）](https://www.processon.com/view/link/626ff47d6376891e1c20afef)**
-![](http://assets.processon.com/chart_image/626ff415e401fd1b2466f809.png)
+![image](https://user-images.githubusercontent.com/35335061/166648498-bfda6082-acd0-4354-bd2c-fda8afceaea1.png)
 
 
 本仓库内容大致分为两个部分，
