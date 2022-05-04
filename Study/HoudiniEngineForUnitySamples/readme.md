@@ -20,8 +20,8 @@
 解决方案来自：http://wordpress.discretization.de/houdini/home/advanced-2/using-houdini-digital-assets/
 
 The important message to take home is that a digital asset is meant to stay in sync with its definition. Changing the definition will change it everywhere where it has been imported. This is also why digital assets are locked from editing and have to be unlocked first.
-![]("pictures/permissiondenied.png")
-![]("pictures/allow-edit.gif")
+![](pictures/permissiondenied.png)
+![](pictures/allow-edit.gif)
 
 
 
