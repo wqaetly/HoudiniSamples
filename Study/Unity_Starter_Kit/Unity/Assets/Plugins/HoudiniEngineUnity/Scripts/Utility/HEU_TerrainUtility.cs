@@ -1353,7 +1353,7 @@ namespace HoudiniEngineUnity
 		    float oldY = y * yScale;
 		    float oldX = x * xScale;
 		    int x0 = Mathf.FloorToInt(oldX);
-		    int x1 = Mathf.Min(Mathf.FloorToInt(oldY) + 1, oldWidth - 1);
+		    int x1 = Mathf.Min(Mathf.FloorToInt(oldX) + 1, oldWidth - 1);
 		    int y0 = Mathf.FloorToInt(oldY);
 		    int y1 = Mathf.Min(Mathf.FloorToInt(oldY), oldHeight - 1);
 
@@ -1371,7 +1371,42 @@ namespace HoudiniEngineUnity
 	    return result;
 	}
 
+	public static bool GetAttributeTile(HEU_SessionBase session, HAPI_NodeId geoID, HAPI_PartId partID, out int outTileAttribute)
+	{
+	    outTileAttribute = 0;
+	    bool validTileIndex = false;
+	    HAPI_AttributeInfo info = new HAPI_AttributeInfo();
+	    int[] tileAttribute = new int[0];
 
+	    // tile
+	    if (session.GetAttributeInfo(geoID, partID, HEU_Defines.HAPI_HEIGHTFIELD_TILE_ATTR, HAPI_AttributeOwner.HAPI_ATTROWNER_PRIM, ref info) && info.exists)
+	    {
+		tileAttribute = new int[info.count];
+		if (session.GetAttributeIntData(geoID, partID, HEU_Defines.HAPI_HEIGHTFIELD_TILE_ATTR, ref info, tileAttribute, 0, info.count))
+		{
+		    validTileIndex = true;
+		    outTileAttribute = tileAttribute[0];
+		}
+	    }
+
+	    if (!validTileIndex)
+	    {
+		// Unity tile
+		if (session.GetAttributeInfo(geoID, partID, HEU_Defines.HEIGHTFIELD_UNITY_TILE, HAPI_AttributeOwner.HAPI_ATTROWNER_PRIM, ref info) && info.exists)
+		{
+		    tileAttribute = new int[info.count];
+		    if (session.GetAttributeIntData(geoID, partID, HEU_Defines.HEIGHTFIELD_UNITY_TILE, ref info, tileAttribute, 0, info.count))
+		    {
+		        validTileIndex = true;
+			outTileAttribute = tileAttribute[0];
+		    }
+		}
+	    }
+
+	    if (!validTileIndex) return false;
+
+	    return true;
+	}
     }
 
 }   // HoudiniEngineUnity

@@ -1127,6 +1127,14 @@ namespace HoudiniEngineUnity
 			    value = Mathf.Min(parameterData.IntMax, value);
 			}
 
+			if (value != intsValue[0])
+			{
+			    if (HEU_PluginSettings.CookOnMouseUp && _parameters != null && _parameters.ParentAsset != null && !HEU_EditorUtility.ReleasedMouse())
+			    {
+				_parameters.ParentAsset.PendingAutoCookOnMouseRelease = true;
+			    }
+			}
+
 			intsValue[0] = value;
 		    }
 		    else
@@ -1166,6 +1174,14 @@ namespace HoudiniEngineUnity
 		    if (parameterData.HasMax())
 		    {
 			value = Mathf.Min(parameterData.FloatMax, value);
+		    }
+
+		    if (value != floatsValue[0])
+		    {
+			if (HEU_PluginSettings.CookOnMouseUp && _parameters != null && _parameters.ParentAsset != null && !HEU_EditorUtility.ReleasedMouse())
+			{
+			    _parameters.ParentAsset.PendingAutoCookOnMouseRelease = true;
+			}
 		    }
 
 		    floatsValue[0] = value;
@@ -1939,13 +1955,11 @@ namespace HoudiniEngineUnity
 	{
 	    int newIndex = _parameterModifiers.Count;
 
-
-
 	    HEU_ParameterModifier parameterModifier = new HEU_ParameterModifier();
 	    parameterModifier._action = action;
-	    parameterModifier._parameterIndex = unityParamIndex;
-	    parameterModifier._instanceIndex = instanceIndex;
-	    parameterModifier._modifierValue = numInstancesToAdd;
+	    parameterModifier.ParameterIndex = unityParamIndex;
+	    parameterModifier.InstanceIndex = instanceIndex;
+	    parameterModifier.ModifierValue = numInstancesToAdd;
 
 	    _parameterModifiers.Insert(newIndex, parameterModifier);
 
@@ -1966,13 +1980,13 @@ namespace HoudiniEngineUnity
 	private void AddMultiParmModifierPropertyFloat(int unityParamIndex, int instanceIndex, int numInstancesToAdd, float floatValue)
 	{
 	    HEU_ParameterModifier newModifier = AddMultiParmModifierProperty(HEU_ParameterModifier.ModifierAction.SET_FLOAT, unityParamIndex, instanceIndex, numInstancesToAdd);
-	    newModifier._floatValue = floatValue;
+	    newModifier.FloatValue = floatValue;
 	}
 
 	private void AddMultiParmModifierPropertyInt(int unityParamIndex, int instanceIndex, int numInstancesToAdd, int intValue)
 	{
 	    HEU_ParameterModifier newModifier = AddMultiParmModifierProperty(HEU_ParameterModifier.ModifierAction.SET_INT, unityParamIndex, instanceIndex, numInstancesToAdd);
-	    newModifier._intValue = intValue;
+	    newModifier.IntValue = intValue;
 	}
 
 	private void GetFloatRampPointData(HEU_ParameterUICache paramUICache, int pointIndex, ref float position, ref float value, ref int interp)

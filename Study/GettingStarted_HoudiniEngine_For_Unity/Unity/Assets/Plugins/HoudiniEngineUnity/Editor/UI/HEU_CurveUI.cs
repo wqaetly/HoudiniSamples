@@ -73,6 +73,10 @@ namespace HoudiniEngineUnity
 		"You can add and edit curve points similar to the Houdini Curve tool."
 		+ "\nSelect ADD or EDIT mode or switch to them using Space.";
 
+	private const string _curveViewHelp2 =
+		"You can add and edit curve points similar to the Houdini Curve tool."
+		+ "\nSelect ADD or EDIT mode or switch to them using F2.";
+
 	private const float _rayCastMaxDistance = 5000f;
 
 	GUIContent[] InteractionModeLabels = new GUIContent[]
@@ -353,17 +357,21 @@ namespace HoudiniEngineUnity
 	    // Keep track of curves that were updated so we can apply changes via serialization
 	    List<SerializedObject> updatedCurves = new List<SerializedObject>();
 
+	    bool bMouseInDrawArea = HEU_GeneralUtility.IsMouseWithinSceneView(_currentCamera, mousePosition)
+		    && !HEU_GeneralUtility.IsMouseOverRect(_currentCamera, mousePosition, ref _curveEditorUIRect)
+		    && (!_showInfoRepaint || !HEU_GeneralUtility.IsMouseOverRect(_currentCamera, mousePosition, ref _infoRect));
+
 	    if (_interactionMode == HEU_Curve.Interaction.VIEW)
 	    {
-		UpdateViewMode(asset, controlID, eventType, mousePosition, updatedCurves);
+		UpdateViewMode(asset, controlID, eventType, mousePosition, updatedCurves, bMouseInDrawArea);
 	    }
 	    else if (_interactionMode == HEU_Curve.Interaction.ADD)
 	    {
-		UpdateAddMode(asset, controlID, eventType, mousePosition, updatedCurves);
+		UpdateAddMode(asset, controlID, eventType, mousePosition, updatedCurves, bMouseInDrawArea);
 	    }
 	    else if (_interactionMode == HEU_Curve.Interaction.EDIT)
 	    {
-		UpdateEditMode(asset, controlID, eventType, mousePosition, updatedCurves);
+		UpdateEditMode(asset, controlID, eventType, mousePosition, updatedCurves, bMouseInDrawArea);
 	    }
 
 	    if (EditorGUI.EndChangeCheck())
@@ -385,7 +393,7 @@ namespace HoudiniEngineUnity
 	    DrawSceneInfo();
 	}
 
-	private void UpdateViewMode(HEU_HoudiniAsset asset, int controlID, EventType eventType, Vector3 mousePosition, List<SerializedObject> updatedCurves)
+	private void UpdateViewMode(HEU_HoudiniAsset asset, int controlID, EventType eventType, Vector3 mousePosition, List<SerializedObject> updatedCurves, bool bMouseInDrawArea)
 	{
 	    Event currentEvent = Event.current;
 
@@ -403,7 +411,7 @@ namespace HoudiniEngineUnity
 		}
 		case EventType.KeyUp:
 		{
-		    if (!currentEvent.alt && currentEvent.keyCode == KeyCode.Space)
+		    if (!currentEvent.alt && currentEvent.keyCode == ToggleModeHotkey())
 		    {
 			// Toggle modes
 			SwitchToMode(HEU_Curve.Interaction.ADD);
@@ -441,7 +449,7 @@ namespace HoudiniEngineUnity
 	    }
 	}
 
-	private void UpdateAddMode(HEU_HoudiniAsset asset, int controlID, EventType eventType, Vector3 mousePosition, List<SerializedObject> updatedCurves)
+	private void UpdateAddMode(HEU_HoudiniAsset asset, int controlID, EventType eventType, Vector3 mousePosition, List<SerializedObject> updatedCurves, bool bMouseInDrawArea)
 	{
 	    Event currentEvent = Event.current;
 
@@ -474,7 +482,7 @@ namespace HoudiniEngineUnity
 		}
 		case EventType.KeyUp:
 		{
-		    if (currentEvent.keyCode == KeyCode.Space && !currentEvent.alt)
+		    if (currentEvent.keyCode == ToggleModeHotkey() && !currentEvent.alt)
 		    {
 			// Toggle modes
 			SwitchToMode(HEU_Curve.Interaction.EDIT);
@@ -529,7 +537,7 @@ namespace HoudiniEngineUnity
 		}
 		case EventType.Repaint:
 		{
-		    this.RepaintAddNode(asset, controlID, eventType, mousePosition, _newPointMode);
+		    this.RepaintAddNode(asset, controlID, eventType, mousePosition, _newPointMode, bMouseInDrawArea);
 
 		    break;
 		}
@@ -537,23 +545,19 @@ namespace HoudiniEngineUnity
 	}
 
 
-	private void RepaintAddNode(HEU_HoudiniAsset asset, int controlID, EventType eventType, Vector3 mousePosition, CurveNewPointMode curvePointMode)
+	private void RepaintAddNode(HEU_HoudiniAsset asset, int controlID, EventType eventType, Vector3 mousePosition, CurveNewPointMode curvePointMode, bool bMouseInDrawArea)
 	{
 	    Event currentEvent = Event.current;
  
 	    Color defaultHandleColor = Handles.color;
- 
-	    bool bMouseInDrawArea = HEU_GeneralUtility.IsMouseWithinSceneView(_currentCamera, mousePosition)
-		    && !HEU_GeneralUtility.IsMouseOverRect(_currentCamera, mousePosition, ref _curveEditorUIRect)
-		    && (!_showInfoRepaint || !HEU_GeneralUtility.IsMouseOverRect(_currentCamera, mousePosition, ref _infoRect));
- 
+
 	    // Plane for default collider
 	    Plane collisionPlane = new Plane(Vector3.up, Vector3.zero);
 	    //Ray mouseRay = _currentCamera.ScreenPointToRay(mousePosition);
 	    //Vector3 planePosition = mouseRay.origin + mouseRay.direction * 100f;
 	    //Plane collisionPlane = new Plane(-_currentCamera.transform.forward, planePosition);
  
-	    HEU_Curve.CurveDrawCollision drawCollision = asset.CurveDrawCollision;
+	    HEU_Curve.CurveDrawCollision drawCollision = asset.CurveDrawCollisionInternal;
 	    List<Collider> drawColliders = null;
 	    LayerMask drawLayerMask = Physics.DefaultRaycastLayers;
 	    if (drawCollision == HEU_Curve.CurveDrawCollision.LAYERMASK)
@@ -658,7 +662,7 @@ namespace HoudiniEngineUnity
 				if (_curves.Count > 1)
 				{
 				    // Multiple curves -> use position of asset
-				    checkPoint = curve._targetGameObject.transform.position;
+				    checkPoint = curve.TargetGameObject.transform.position;
 				}
 				else
 				{
@@ -764,11 +768,16 @@ namespace HoudiniEngineUnity
 	    }
 	}
 
-	private void HybridEditAddMode(HEU_HoudiniAsset asset, int controlID, EventType eventType, Vector3 mousePosition, List<SerializedObject> updatedCurves)
+	private void HybridEditAddMode(HEU_HoudiniAsset asset, int controlID, EventType eventType, Vector3 mousePosition, List<SerializedObject> updatedCurves, bool bMouseInDrawArea)
 	{
 	    Event currentEvent = Event.current;
 
 	    Color defaultHandleColor = Handles.color;
+	    if (!bMouseInDrawArea && eventType != EventType.Repaint)
+	    {
+		// Don't allow for any input, just allow for repaints
+		return;
+	    }
 
 	    switch (eventType)
 	    {
@@ -815,17 +824,17 @@ namespace HoudiniEngineUnity
 
 		    if (bIsMouseIntersectingClosestPoint)
 		    {
-		        RepaintAddNode(asset, controlID, eventType, mousePosition, CurveNewPointMode.INSIDE);
+		        RepaintAddNode(asset, controlID, eventType, mousePosition, CurveNewPointMode.INSIDE, bMouseInDrawArea);
 		    }
 		    else
 		    {
 		        if (currentEvent.control)
 		        {
-			    RepaintAddNode(asset, controlID, eventType, mousePosition, CurveNewPointMode.START);
+			    RepaintAddNode(asset, controlID, eventType, mousePosition, CurveNewPointMode.START, bMouseInDrawArea);
 		        }
 		        else
 		        {
-			    RepaintAddNode(asset, controlID, eventType, mousePosition, CurveNewPointMode.END);
+			    RepaintAddNode(asset, controlID, eventType, mousePosition, CurveNewPointMode.END, bMouseInDrawArea);
 		        }
 		    }
 
@@ -835,7 +844,7 @@ namespace HoudiniEngineUnity
 	    }
 	}
 
-	private void UpdateEditMode(HEU_HoudiniAsset asset, int controlID, EventType eventType, Vector3 mousePosition, List<SerializedObject> updatedCurves)
+	private void UpdateEditMode(HEU_HoudiniAsset asset, int controlID, EventType eventType, Vector3 mousePosition, List<SerializedObject> updatedCurves, bool bMouseInDrawArea)
 	{
 	    // In edit, we draw points as interactable buttons, allowing for selection/deselection.
 	    // We also draw drag handle for selected buttons.
@@ -844,7 +853,13 @@ namespace HoudiniEngineUnity
 
 	    if (currentEvent.shift && HEU_PluginSettings.UseHybridCurveEditing)
 	    {
-		HybridEditAddMode(asset, controlID, eventType, mousePosition, updatedCurves);
+		HybridEditAddMode(asset, controlID, eventType, mousePosition, updatedCurves, bMouseInDrawArea);
+		return;
+	    }
+
+	    if (!bMouseInDrawArea && eventType != EventType.Repaint)
+	    {
+		// Only allow repainting if mouse is over UI
 		return;
 	    }
 
@@ -1132,7 +1147,7 @@ namespace HoudiniEngineUnity
 			SwitchToMode(HEU_Curve.Interaction.VIEW);
 			currentEvent.Use();
 		    }
-		    else if (!currentEvent.alt && currentEvent.keyCode == KeyCode.Space)
+		    else if (!currentEvent.alt && currentEvent.keyCode == ToggleModeHotkey())
 		    {
 			// Toggle modes
 			SwitchToMode(HEU_Curve.Interaction.ADD);
@@ -1268,7 +1283,7 @@ namespace HoudiniEngineUnity
 	    Color defaultColor = Handles.color;
 	    Handles.color = lineColor;
 	    Matrix4x4 defaultMatrix = Handles.matrix;
-	    Handles.matrix = curve._targetGameObject.transform.localToWorldMatrix;
+	    Handles.matrix = curve.TargetGameObject.transform.localToWorldMatrix;
 	    Handles.DrawAAPolyLine(_lineTexture, 10f, vertices);
 	    Handles.matrix = defaultMatrix;
 	    Handles.color = defaultColor;
@@ -1281,7 +1296,7 @@ namespace HoudiniEngineUnity
 	    Color defaultColor = Handles.color;
 	    Handles.color = lineColor;
 	    Matrix4x4 defaultMatrix = Handles.matrix;
-	    Handles.matrix = curve._targetGameObject.transform.localToWorldMatrix;
+	    Handles.matrix = curve.TargetGameObject.transform.localToWorldMatrix;
 	    Handles.DrawAAPolyLine(_lineTexture, 10f, points.ToArray());
 	    Handles.matrix = defaultMatrix;
 	    Handles.color = defaultColor;
@@ -1491,7 +1506,11 @@ namespace HoudiniEngineUnity
 		    // Help text
 		    if (_interactionMode == HEU_Curve.Interaction.VIEW)
 		    {
+#if UNITY_2021_2_OR_NEWER
+			GUILayout.Label(_curveViewHelp2);
+#else
 			GUILayout.Label(_curveViewHelp);
+#endif
 		    }
 		    else if (_interactionMode == HEU_Curve.Interaction.ADD)
 		    {
@@ -1499,7 +1518,7 @@ namespace HoudiniEngineUnity
 			DrawHelpLineGridBox("A", "Toggle where to add new point (Start, Inside, End).");
 			DrawHelpLineGridBox("Hold " + HEU_Defines.HEU_KEY_CTRL, "Grid snapping.");
 			DrawHelpLineGridBox("Backspace", "Delete last new point.");
-			DrawHelpLineGridBox("Space", "Edit mode.");
+			DrawToggleModeHotkey("Edit mode.");
 			DrawHelpLineGridBox("Esc / Enter", "View mode.");
 
 			GUILayout.Space(5);
@@ -1529,7 +1548,7 @@ namespace HoudiniEngineUnity
 			    DrawHelpLineGridBox(HEU_Defines.HEU_KEY_CTRL + " + Left Mouse", "Multi-select point.");
 			    DrawHelpLineGridBox(string.Format("Hold {0} + Left Mouse", HEU_Defines.HEU_KEY_CTRL), "Grid snapping when moving points.");
 			    DrawHelpLineGridBox("Backspace", "Delete selected points.");
-			    DrawHelpLineGridBox("Space", "Add mode.");
+			    DrawToggleModeHotkey("Add mode.");
 			    DrawHelpLineGridBox("F", "Frame the selected nodes or the curve itself.");
 			    if (HEU_PluginSettings.UseHybridCurveEditing)
 			    {
@@ -1866,6 +1885,23 @@ namespace HoudiniEngineUnity
 	    }
 	}
 
+	internal void DrawToggleModeHotkey(string description)
+	{
+#if UNITY_2021_2_OR_NEWER
+	    DrawHelpLineGridBox("F2", description);
+#else
+	    DrawHelpLineGridBox("Space", description);
+#endif
+	}
+
+	internal KeyCode ToggleModeHotkey()
+	{
+#if UNITY_2021_2_OR_NEWER
+	    return KeyCode.F2;
+#else
+	    return KeyCode.Space;
+#endif
+	}
     }
 
 }   // HoudiniEngineUnity

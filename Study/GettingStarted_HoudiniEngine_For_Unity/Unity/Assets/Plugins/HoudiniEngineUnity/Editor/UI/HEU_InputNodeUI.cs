@@ -37,6 +37,8 @@ namespace HoudiniEngineUnity
     public static class HEU_InputNodeUI
     {
 
+	private static GUIContent _meshExportCollidersContent = new GUIContent("Export colliders", "If checked, will export colliders on the object.");
+
 	private static GUIContent _tilemapCreateGroupsContent = new GUIContent("Create Groups for Tiles", "If checked, will create a point group for each kind of tile using its tile name. If unchecked, will create a point string attribute instead.");
 	private static GUIContent _tilemapExportUnusedTilesContent = new GUIContent("Keep Unused Tiles", "If checked, will create a point for an empty tile");
 	private static GUIContent _tilemapColorContent = new GUIContent("Apply Tile color", "If checked, will output a Cd color attribute to point.");
@@ -60,6 +62,7 @@ namespace HoudiniEngineUnity
 
 		inputNode._uiCache._inputObjectsProperty = HEU_EditorUtility.GetSerializedProperty(inputNode._uiCache._inputNodeSerializedObject, "_inputObjects");
 
+		inputNode._uiCache._meshSettingsProperty = HEU_EditorUtility.GetSerializedProperty(inputNode._uiCache._inputNodeSerializedObject, "_meshSettings");
 		inputNode._uiCache._tilemapSettingsProperty = HEU_EditorUtility.GetSerializedProperty(inputNode._uiCache._inputNodeSerializedObject, "_tilemapSettings");
 
 		int inputCount = inputNode._uiCache._inputObjectsProperty.arraySize;
@@ -253,6 +256,35 @@ The UNITY_MESH type can accept any GameObject (Including Terrain, HEU_BoundingVo
 
 			DrawSelectionWindow(inputObjectType, inputNode);
 
+			if (inputObjectType == HEU_InputNode.InputObjectType.UNITY_MESH && inputNode.MeshSettings != null)
+			{
+			    HEU_EditorUI.DrawHeadingLabel("Mesh settings");
+			    EditorGUI.indentLevel++;
+			    {
+				UnityEditor.SerializedProperty exportCollidersProperty = inputNode._uiCache._meshSettingsProperty.FindPropertyRelative("_exportColliders");
+	
+				exportCollidersProperty.boolValue = HEU_EditorUI.DrawToggleLeft(exportCollidersProperty.boolValue, _meshExportCollidersContent.text, _meshExportCollidersContent.tooltip);
+			    }
+			    EditorGUI.indentLevel--;
+			}
+			else if (inputObjectType == HEU_InputNode.InputObjectType.TILEMAP && inputNode.TilemapSettings != null)
+			{
+			    HEU_EditorUI.DrawHeadingLabel("Tilemap settings");
+			    EditorGUI.indentLevel++;
+			    {
+				UnityEditor.SerializedProperty createGroupsForTilesProperty = inputNode._uiCache._tilemapSettingsProperty.FindPropertyRelative("_createGroupsForTiles");
+				UnityEditor.SerializedProperty exportUnusedTilesProperty = inputNode._uiCache._tilemapSettingsProperty.FindPropertyRelative("_exportUnusedTiles");
+				UnityEditor.SerializedProperty applyTileColorProperty = inputNode._uiCache._tilemapSettingsProperty.FindPropertyRelative("_applyTileColor");
+				UnityEditor.SerializedProperty applyTilemapOrientationProperty = inputNode._uiCache._tilemapSettingsProperty.FindPropertyRelative("_applyTilemapOrientation");
+
+				createGroupsForTilesProperty.boolValue = HEU_EditorUI.DrawToggleLeft(createGroupsForTilesProperty.boolValue, _tilemapCreateGroupsContent.text, _tilemapCreateGroupsContent.tooltip);
+				exportUnusedTilesProperty.boolValue = HEU_EditorUI.DrawToggleLeft(exportUnusedTilesProperty.boolValue, _tilemapExportUnusedTilesContent.text, _tilemapExportUnusedTilesContent.tooltip);
+				applyTileColorProperty.boolValue = HEU_EditorUI.DrawToggleLeft(applyTileColorProperty.boolValue, _tilemapColorContent.text, _tilemapColorContent.tooltip);
+				applyTilemapOrientationProperty.boolValue = HEU_EditorUI.DrawToggleLeft(applyTilemapOrientationProperty.boolValue, _tilemapOrientationContent.text, _tilemapOrientationContent.tooltip);
+			    }
+			    EditorGUI.indentLevel--;
+			}
+
 			if (!bSkipElements)
 			{
 			    using (var vs1 = new EditorGUILayout.VerticalScope())
@@ -346,24 +378,6 @@ The UNITY_MESH type can accept any GameObject (Including Terrain, HEU_BoundingVo
 						    objectCache._scaleProperty.vector3Value = EditorGUILayout.Vector3Field(scaleLabel, objectCache._scaleProperty.vector3Value);
 						}
 					    }
-
-					    if (inputObjectType == HEU_InputNode.InputObjectType.TILEMAP && inputNode.TilemapSettings != null)
-					    {
-					        EditorGUILayout.LabelField("Tilemap settings ");
-						EditorGUI.indentLevel++;
-						{
-					    	    UnityEditor.SerializedProperty createGroupsForTilesProperty = inputNode._uiCache._tilemapSettingsProperty.FindPropertyRelative("_createGroupsForTiles");
-						    UnityEditor.SerializedProperty exportUnusedTilesProperty = inputNode._uiCache._tilemapSettingsProperty.FindPropertyRelative("_exportUnusedTiles");
-						    UnityEditor.SerializedProperty applyTileColorProperty = inputNode._uiCache._tilemapSettingsProperty.FindPropertyRelative("_applyTileColor");
-						    UnityEditor.SerializedProperty applyTilemapOrientationProperty = inputNode._uiCache._tilemapSettingsProperty.FindPropertyRelative("_applyTilemapOrientation");
-
-						    createGroupsForTilesProperty.boolValue = HEU_EditorUI.DrawToggleLeft(createGroupsForTilesProperty.boolValue, _tilemapCreateGroupsContent.text, _tilemapCreateGroupsContent.tooltip);
-						    exportUnusedTilesProperty.boolValue = HEU_EditorUI.DrawToggleLeft(exportUnusedTilesProperty.boolValue, _tilemapExportUnusedTilesContent.text, _tilemapExportUnusedTilesContent.tooltip);
-						    applyTileColorProperty.boolValue = HEU_EditorUI.DrawToggleLeft(applyTileColorProperty.boolValue, _tilemapColorContent.text, _tilemapColorContent.tooltip);
-						    applyTilemapOrientationProperty.boolValue = HEU_EditorUI.DrawToggleLeft(applyTilemapOrientationProperty.boolValue, _tilemapOrientationContent.text, _tilemapOrientationContent.tooltip);
-						}
-						EditorGUI.indentLevel--;
-					    }
 					}
 				    }
 				    EditorGUI.indentLevel--;
@@ -448,12 +462,26 @@ The UNITY_MESH type can accept any GameObject (Including Terrain, HEU_BoundingVo
 		    }
 		}
 
-		if (!inputNode.IsUsingSelectFromHierarchy)
+		if (!inputNode._usingSelectFromHierarchy)
 		{
-		    if (GUILayout.Button(new GUIContent("Select from Hierarchy (Locks Inspector)", "Locks the inspector and so you can select GameObjects from the Hierarchy. Once select, press Use Current Selection to add the specified objects as inputs.")))
+		    string title = "Select from Hierarchy (Locks Inspector)";
+		    float shortenLength = 420;
+		    float reallyShortLength = 320;
+
+		    float screenWidth = Screen.width;
+		    if (screenWidth < reallyShortLength)
+		    {
+			title = "From Hierarchy";
+		    }
+		    else if (screenWidth < shortenLength)
+		    {
+			title = "Select from Hierarchy";
+		    }
+		
+		    if (GUILayout.Button(new GUIContent(title, "Locks the inspector and so you can select GameObjects from the Hierarchy. Once select, press Use Current Selection to add the specified objects as inputs.")))
 		    {
 		        SetInspectorLock(true);
-			inputNode.IsUsingSelectFromHierarchy = true;
+			inputNode._usingSelectFromHierarchy = true;
 		    }
 		}
 		else
@@ -461,7 +489,7 @@ The UNITY_MESH type can accept any GameObject (Including Terrain, HEU_BoundingVo
 		    if (GUILayout.Button("Use Current Selection"))
 		    {
 		        SetInspectorLock(false);
-			inputNode.IsUsingSelectFromHierarchy = false;
+			inputNode._usingSelectFromHierarchy = false;
 
 			GameObject[] selection = Selection.gameObjects;
 			List<GameObject> filteredObjects = new List<GameObject>(selection);

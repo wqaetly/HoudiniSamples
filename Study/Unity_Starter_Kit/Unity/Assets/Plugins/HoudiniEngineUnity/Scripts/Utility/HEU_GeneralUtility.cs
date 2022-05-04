@@ -463,6 +463,62 @@ namespace HoudiniEngineUnity
 	    return null;
 	}
 
+	// Gets attribute data as a string
+	// If the attribute is not a string attribute, then it will convert it into a string attribute.
+	public static string[] GetAttributeDataAsString(HEU_SessionBase session, HAPI_NodeId geoID, HAPI_PartId partID, string name, ref HAPI_AttributeInfo attrInfo)
+	{
+	    if (!GetAttributeInfo(session, geoID, partID, name, ref attrInfo))
+	    {
+		return null;
+	    }
+
+	    if (!attrInfo.exists)
+	    {
+		return null;
+	    }
+
+	    if (attrInfo.storage == HAPI_StorageType.HAPI_STORAGETYPE_STRING)
+	    {
+		int[] stringHandles = new int[0];
+		if (GetAttribute(session, geoID, partID, name, ref attrInfo, ref stringHandles, session.GetAttributeStringData))
+		{
+		    return HEU_SessionManager.GetStringValuesFromStringIndices(stringHandles);
+		}
+
+		return null;
+	    }
+	    else if (attrInfo.storage == HAPI_StorageType.HAPI_STORAGETYPE_FLOAT)
+	    {
+		float[] floatData = new float[attrInfo.count * attrInfo.tupleSize];
+		if (session.GetAttributeFloatData(geoID, partID, name, ref attrInfo, floatData, 0, attrInfo.count))
+		{
+		    string[] convertedData = new string[floatData.Length];
+		    for (int i = 0; i < floatData.Length; i++)
+		    {
+			convertedData[i] = floatData[i].ToString();
+		    }
+
+		    return convertedData;
+		}
+	    }
+	    else if (attrInfo.storage == HAPI_StorageType.HAPI_STORAGETYPE_INT)
+	    {
+		int[] intData = new int[attrInfo.count * attrInfo.tupleSize];
+		if (session.GetAttributeIntData(geoID, partID, name, ref attrInfo, intData, 0, attrInfo.count))
+		{
+		    string[] convertedData = new string[intData.Length];
+		    for (int i = 0; i < intData.Length; i++)
+		    {
+			convertedData[i] = intData[i].ToString();
+		    }
+
+		    return convertedData;
+		}
+	    }
+
+	    return null;
+	}
+
 	public delegate bool SetAttributeArrayFunc<T>(HAPI_NodeId geoID, HAPI_PartId partID, string attrName, ref HAPI_AttributeInfo attrInfo, T[] items, int start, int end);
 
 	public static bool SetAttributeArray<T>(HAPI_NodeId geoID, HAPI_PartId partID, string attrName, ref HAPI_AttributeInfo attrInfo, T[] items, SetAttributeArrayFunc<T> setFunc, int count)
@@ -1339,7 +1395,14 @@ namespace HoudiniEngineUnity
 	public static bool IsMouseOverRect(Camera camera, Vector2 mousePosition, ref Rect rect)
 	{
 	    mousePosition.y = camera.pixelHeight - mousePosition.y;
-	    return rect.Contains(mousePosition);
+	    float pixelsPerPoint = 1;
+
+#if UNITY_EDITOR
+	    pixelsPerPoint = EditorGUIUtility.pixelsPerPoint;
+#endif
+
+	    Vector2 mouseNew = new Vector2(mousePosition.x / pixelsPerPoint, mousePosition.y / pixelsPerPoint);
+	    return rect.Contains(mouseNew);
 	}
 
 	/// <summary>
@@ -1754,7 +1817,7 @@ namespace HoudiniEngineUnity
 	    return (viewportPos.z > 0) && (new Rect(0, 0, 1, 1).Contains(viewportPos));
 	}
 
-	public static List<HEU_Handle> FindOrGenerateHandles(HEU_SessionBase session, ref HAPI_AssetInfo assetInfo, HAPI_NodeId assetID, string assetName, HEU_Parameters parameters, List<HEU_Handle> currentHandles)
+	internal static List<HEU_Handle> FindOrGenerateHandles(HEU_SessionBase session, ref HAPI_AssetInfo assetInfo, HAPI_NodeId assetID, string assetName, HEU_Parameters parameters, List<HEU_Handle> currentHandles)
 	{
 	    List<HEU_Handle> newHandles = new List<HEU_Handle>();
 
@@ -2130,7 +2193,7 @@ namespace HoudiniEngineUnity
 		if (destroyIfExists)
 		    DestroyChildWithName(parent.transform, name);
 		
-		GameObject newObj = new GameObject(name);
+		GameObject newObj = HEU_GeneralUtility.CreateNewGameObject(name);
 		newObj.transform.SetParent(parent.transform);
 		childGameObjects.Add(newObj);
 	    }
@@ -2166,6 +2229,23 @@ namespace HoudiniEngineUnity
 		{
 		    GameObject.DestroyImmediate(child.gameObject);
 		}
+	    }
+	}
+
+
+	// Helper to create a new gameObject. Helps with debugging.
+	public static GameObject CreateNewGameObject(string name = "")
+	{	
+	    if (name == "") return new GameObject();
+	    return new GameObject(name);
+	}
+
+	// Helper to rename a new gameObject. Helps with debugging.
+	public static void RenameGameObject(GameObject obj, string name)
+	{
+	    if (obj != null)
+	    {
+		obj.name = name;
 	    }
 	}
 
