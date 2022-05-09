@@ -11,6 +11,7 @@
  - 安装Houdini时需要勾选SideFX Labs，因为Houdini Engine For Unity需要用到这个库里面的内容，建议使用与Houdini版本配套的SideFX Labs，以免出现API调用错误
  - 鉴于插件经常抽风的特性，建议强行覆盖插件识别的Houdini安装目录，菜单栏->HoudiniEngine->Plugin Settings->Override Houdini Install Path，然后重启Unity
  - 当出现编辑问题时（例如曲线编辑器不正常显示），可以尝试点击HEU_Houdini Asset Root脚本的Inspector面板Rebuild按钮
+ - 如果Rebuild报告错误，很有可能是因为Houdini的一些模块服务没有启动，可以先启动一次Houdini，然后重启Unity即可
  - 需要注意的是，免费许可（HOUDINI APPRENTICE）是没有办法导出HDA给Houdini Engine For Unity用的，因为Houdini Engine For Unity只认商业版的Houdini导出的HDA。说白了，就是如果你想要自己在Houdini制作并导出HDA，就得花钱买商业版，最便宜的（HOUDINI INDIE）一年要1.2k左右：https://www.sidefx.com/buy/#houdini-indie
 
 ## 常见问题
