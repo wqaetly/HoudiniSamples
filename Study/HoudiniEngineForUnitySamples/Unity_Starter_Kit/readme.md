@@ -54,4 +54,10 @@ Houdini Engine For Unity（以下简称HEFU）可以将HDA输出内容烘焙成G
 
 ![image-20220510012231433](readme.assets/image-20220510012231433.png)
 
+## [模块化墙壁工具](https://www.youtube.com/watch?v=95-gmPzMgiE&list=PLXNFA1EysfYl0noIUdMUSsG-TOpkm0-CQ&index=5)
+
+这个其实没什么好说的，就是Houdini工程值得好好学习下
+
+![image-20220511000213031](readme.assets/image-20220511000213031.png)
+
 ## [Trim Tool](https://www.youtube.com/watch?v=cq_d-ZppqdI)
