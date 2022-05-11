@@ -28,7 +28,7 @@ Houdini Engine For Unity（以下简称HEFU）可以将HDA输出内容烘焙成G
 
 ![image-20220509224936550](readme.assets/image-20220509224936550.png)
 
-## [Tree Tool](https://www.youtube.com/watch?v=rghCh8A4LXg)
+## [Tree Tool](https://www.youtube.com/watch?v=rghCh8A4LXg&list=PLXNFA1EysfYl0noIUdMUSsG-TOpkm0-CQ&index=3)
 
 非常不错的曲线编辑器和树杈生成算法
 
@@ -59,5 +59,31 @@ Houdini Engine For Unity（以下简称HEFU）可以将HDA输出内容烘焙成G
 这个其实没什么好说的，就是Houdini工程值得好好学习下
 
 ![image-20220511000213031](readme.assets/image-20220511000213031.png)
+
+
+
+## [树叶/藤蔓工具](https://www.youtube.com/watch?v=pTJtI4vymag&list=PLXNFA1EysfYl0noIUdMUSsG-TOpkm0-CQ&index=6)
+
+有个相当有意思的种植效果，可以研究下
+
+![image-20220511221819302](readme.assets/image-20220511221819302.png)
+
+## [PSD生成关卡工具](https://www.youtube.com/watch?v=RCD0zLM-vi4&list=PLXNFA1EysfYl0noIUdMUSsG-TOpkm0-CQ&index=8)
+
+相当方便的快速关卡模型编辑器
+
+![image-20220511223136355](readme.assets/image-20220511223136355.png)
+
+
+
+## [放置工具](https://www.youtube.com/watch?v=mTbQN5OuOhk&list=PLXNFA1EysfYl0noIUdMUSsG-TOpkm0-CQ&index=9)
+
+![image-20220511224125119](readme.assets/image-20220511224125119.png)
+
+## [波函数坍缩生成关卡](https://www.youtube.com/watch?v=mgWftkTq1XU&list=PLXNFA1EysfYl0noIUdMUSsG-TOpkm0-CQ&index=10)
+
+可以自由选择区域，程序会自动帮忙链接，但是WFC好像有点问题用不了。。。
+
+![image-20220511233408188](readme.assets/image-20220511233408188.png)
 
 ## [Trim Tool](https://www.youtube.com/watch?v=cq_d-ZppqdI)
