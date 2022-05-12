@@ -70,7 +70,7 @@ Houdini Engine For Unity（以下简称HEFU）可以将HDA输出内容烘焙成G
 
 ## [PSD生成关卡工具](https://www.youtube.com/watch?v=RCD0zLM-vi4&list=PLXNFA1EysfYl0noIUdMUSsG-TOpkm0-CQ&index=8)
 
-相当方便的快速关卡模型编辑器
+相当方便的快速关卡模型编辑器，可以通过编辑PSD文件来控制整个关卡的结构
 
 ![image-20220511223136355](readme.assets/image-20220511223136355.png)
 
@@ -86,4 +86,38 @@ Houdini Engine For Unity（以下简称HEFU）可以将HDA输出内容烘焙成G
 
 ![image-20220511233408188](readme.assets/image-20220511233408188.png)
 
-## [Trim Tool](https://www.youtube.com/watch?v=cq_d-ZppqdI)
+
+
+## [管道工具](https://www.youtube.com/watch?v=VxnHOnm3hCg&list=PLXNFA1EysfYl0noIUdMUSsG-TOpkm0-CQ&index=11)
+
+管道编辑工具，可用于水管，线缆的制作，支持自动处理线缆之间的穿插
+
+![image-20220512170355379](readme.assets/image-20220512170355379.png)
+
+
+
+## [关卡编辑器](https://www.youtube.com/watch?v=MoGSdEbF3To&list=PLXNFA1EysfYl0noIUdMUSsG-TOpkm0-CQ&index=12)
+
+同时支持根据mesh输入和曲线编辑
+
+![image-20220512171245359](readme.assets/image-20220512171245359.png)
+
+
+
+## [地形工具](https://www.youtube.com/watch?v=BiX3Xpi_fYQ&list=PLXNFA1EysfYl0noIUdMUSsG-TOpkm0-CQ&index=13)
+
+Houdini导出与Unity Terrain系统有机结合，支持各种自然景观的随机，侵蚀效果模拟，PCG + Manual Edit，并支持导出高度图，Mask图和Layer图
+
+![image-20220512180515032](readme.assets/image-20220512180515032.png)
+
+## [Trim Tool](https://www.youtube.com/watch?v=cq_d-ZppqdI&list=PLXNFA1EysfYl0noIUdMUSsG-TOpkm0-CQ&index=14)
+
+方便设置UV贴图的工具，使UV自动根据设置和模型进行适配，达到良好的效果
+
+![image-20220512182202702](readme.assets/image-20220512182202702.png)
+
+## [道路工具](https://www.youtube.com/watch?v=k4mcpHCacvg&list=PLXNFA1EysfYl0noIUdMUSsG-TOpkm0-CQ&index=15)
+
+可以通过摆放Mesh来生成道路，工具会自动处理相交道路之间的融合问题
+
+![image-20220512182816142](readme.assets/image-20220512182816142.png)
