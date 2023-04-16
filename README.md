@@ -41,6 +41,8 @@
 
 [vexworld的一些适合初学者教程](https://www.youtube.com/watch?v=emEux6cGOww&t=7s&ab_channel=vfxworld)
 
+[水哥的Houdini零基础入门教程](https://pan.baidu.com/s/1cOYy0rsFa8i1m1O_I--dCA?pwd=bp6h)
+
 ### VEX
 
 [jtomori-VEX教程](https://github.com/jtomori/vex_tutorial)
